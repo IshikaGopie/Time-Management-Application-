@@ -1,0 +1,162 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+ul{
+    padding: 0;
+    margin: 0;
+}
+
+li{
+    list-style: none;
+}
+
+body{
+    background-color: #eee;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.side-menu{
+    position: fixed;
+    background: #faf9f9;
+    width:300px;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 30px 20px;
+    transition: width .2s ease-in;
+}
+
+.side-menu.inactive{
+    width: 80px;
+}
+
+.side-menu .top-section{
+    position: relative;
+}
+
+.side-menu .top-section .logo{
+    width: 40px;
+    min-height: 40px;
+    overflow: hidden;
+    display: inline-block;
+}
+
+.side-menu .top-section .logo img{
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.side-menu .top-section .toggle-menu-btn{
+    font-size: 20px;
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+.side-menu.side-menu.inactive .top-section .toggle-menu-btn{
+    right:-50px;
+}
+
+.side-menu .main-menu .menu-item{
+    color: black;
+    text-decoration: none;
+    font-size: 15px;
+    display: block;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.side-menu .main-menu{
+    margin: 5px 0;
+}
+
+.side-menu .main-menu .menu-item .menu-icon{
+    display: inline-block;
+    color: black;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    line-height: 40px;
+    text-align: center;
+}
+
+.side-menu .main-menu .menu-icon span{
+    position: absolute;
+    display: inline-block;
+    line-height: 40px;
+    opacity: 1;
+    transition: opacity .2s ease-in;
+}
+
+.side-menu.side-menu.inactive .main-menu .menu-item span{
+    color: black;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+.side-menu-footer{
+    width: 100%;
+    background: rgb(228, 227, 227);
+    position: absolute;
+    bottom:0;
+    left:0;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.side-menu-footer .avatar{
+    width: 40px;
+    height: 40px;
+    overflow: hidden;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.side-menu-footer .avatar img{
+    max-width: 100%;
+}
+
+.side-menu-footer .user-info{
+    display: inline-block;
+    margin: 0 15px;
+    position: absolute;
+    opacity: 1;
+    transition: opacity .2s ease-in;
+}
+
+.side-menu.inactive .side-menu-footer .user-info{
+    opacity: 1;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+.side-menu-footer .user-info h5{
+    font-size: 15px;
+}
+
+.side-menu-footer.user-info p{
+    font-size: 12px;;
+}
+
+.divider{
+    width: 100%;
+    height: 1px;
+    border-radius: 1px;
+    background-color: rgb(223, 223, 223);
+}
+
+.container{
+    margin-left: 300px;
+    transition: margin-left .2s ease-in;
+    padding: 50px;
+}
+
+.container.inactive{
+    margin-left: 80px;
+}
