@@ -9,9 +9,23 @@ import { data, priorities, categories } from './data.js';
 import Scheduler, { Resource }  from 'devextreme-react/scheduler';
 import { CheckBox } from 'devextreme-react/check-box';
 import notify from 'devextreme/ui/notify';
- 
+import * as AspNetData from 'devextreme-aspnet-data-nojquery';
+
 const views = ["month","day", "week", "agenda"];
 const currentDate = new Date(2022, 3, 4);
+
+const url = 'http://localhost:5000/';
+const dataSource = AspNetData.createStore({
+  key: 'EventID',
+  loadUrl: `${url}/Get`,
+  insertUrl: `${url}/events`,
+  updateUrl: `${url}/events`,
+  deleteUrl: `${url}/DeleteEvent`,
+  onBeforeSend: (_, ajaxOptions) => {
+    ajaxOptions.xhrFields = { withCredentials: true };
+  },
+});
+
 
 class App extends React.Component {
   constructor(props) {
@@ -31,6 +45,16 @@ class App extends React.Component {
     this.showAddedToast = this.showAddedToast.bind(this);
     this.showUpdatedToast = this.showUpdatedToast.bind(this);
     this.showDeletedToast = this.showDeletedToast.bind(this);
+
+    this.validationRules = {
+      position: [
+        { type: 'required', message: 'Position is required.' },
+      ],
+    };
+
+    this.validateForm = (e) => {
+      e.component.validate();
+    };
 
   }
 
@@ -62,16 +86,18 @@ class App extends React.Component {
           onAppointmentUpdated={this.showUpdatedToast}
           onAppointmentDeleted={this.showDeletedToast}
          >
+           <Resource
+            dataSource={categories}
+            fieldExpr="catId"
+            label="Categories"
+            validationRules={this.validationRules.position}
+          />
           <Resource
             dataSource={priorities}
             fieldExpr="priorityId"
             label="Priority"
           />
-           <Resource
-            dataSource={categories}
-            fieldExpr="catId"
-            label="Categories"
-          />
+
           </Scheduler>
         <div className="options">
           <div className="caption">Options</div>
