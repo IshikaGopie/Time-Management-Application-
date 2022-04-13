@@ -42,7 +42,7 @@ const events = [
 ];
 
 function App() {
-    const url="http://localhost:5000/"
+    const url="http://localhost:5000"
     const [newEvent, setNewEvent] = useState({ title: "", start: "", end: "" });
     const [allEvents, setAllEvents] = useState(events);
     //const [value, onChange] = useState(new Date());
@@ -55,23 +55,27 @@ function App() {
     
     function submit(e){
         e.preventDefault();
-        Axios.post(url, {
+        Axios.post(`${url}/events`, {
             title: newEvent.title,
-            start: newEvent.start,
-            end: newEvent.end
+            tag: 'class',
+            priority: 'high',
+            description: '',
+            location: '',
+            startDate: newEvent.start,
+            endDate: newEvent.end
         })
             .then(res => {
                 console.log(res.data)
             })
     }
 
-    useEffect(() => {
+    /*useEffect(() => {
         const getEvents = async() => {
             const {data : res} = await Axios.get(url);
             console.log(res);
         }
         getEvents();
-    })
+    })*/
 
     return (
         <div className="App">
