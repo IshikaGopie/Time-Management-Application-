@@ -2,7 +2,7 @@
   "name": "time-management-app",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:5000",
+  "proxy": "http://localhost:5000/",
   "dependencies": {
     "@syncfusion/ej2-react-calendars": "^19.4.56",
     "@testing-library/jest-dom": "^5.16.2",
@@ -11,6 +11,7 @@
     "@toast-ui/react-calendar": "^1.0.6",
     "axios": "^0.26.1",
     "bootstrap": "^3.4.1",
+    "cors": "^2.8.5",
     "date-fns": "^2.28.0",
     "devextreme": "^21.2.6",
     "devextreme-aspnet-data-nojquery": "^2.8.6",
