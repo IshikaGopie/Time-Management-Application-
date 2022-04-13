@@ -117,10 +117,18 @@ export const categories = [
     },
     {
         id: 4,
-      
-    },
-    {
-        id: 5,
-      
+        text: 'Class',
+
     },
   ];
+
+  export const mapTypes = [{
+    key: 'roadmap',
+    name: 'Road Map',
+  }, {
+    key: 'satellite',
+    name: 'Satellite (Photographic) Map',
+  }, {
+    key: 'hybrid',
+    name: 'Hybrid Map',
+  }];

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import logo from "../assets/logo/webscript.png";
 import user from "../assets/user.jpg";
 import MenuItem from "./MenuItem";
@@ -82,7 +83,7 @@ const SideMenu = (props) =>{
                 </div>
                 <div className="user-info">
                     <h5>Jane Doe</h5>
-                    <p><button class="log-out">Log out</button></p>
+                    <p><Link to="/signin-login" class="log-out">Log out</Link></p>
                     
                 </div>
             </div>

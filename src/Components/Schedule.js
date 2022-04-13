@@ -9,6 +9,7 @@ import { data, priorities, categories } from './data.js';
 import Scheduler, { Resource }  from 'devextreme-react/scheduler';
 import { CheckBox } from 'devextreme-react/check-box';
 import notify from 'devextreme/ui/notify';
+import Axios from 'axios';
 import * as AspNetData from 'devextreme-aspnet-data-nojquery';
 
 const views = ["month","day", "week", "agenda"];
@@ -17,8 +18,8 @@ const currentDate = new Date(2022, 3, 4);
 const url = 'http://localhost:5000/';
 const dataSource = AspNetData.createStore({
   key: 'EventID',
-  loadUrl: `${url}/Get`,
-  insertUrl: `${url}/events`,
+  loadUrl: `${url}/GetEvents`,
+  insertUrl: `${url}/PostEvents`,
   updateUrl: `${url}/events`,
   deleteUrl: `${url}/DeleteEvent`,
   onBeforeSend: (_, ajaxOptions) => {
@@ -65,7 +66,16 @@ class App extends React.Component {
         'Create a new event');
 
     const form = e.form
-
+    let formItems = form.option("items"); 
+        if (!formItems.find(function(i) { return i.dataField === "location" })) {
+            formItems.push({
+                colSpan: 2,
+                label: { text: "Average Time:" },
+                editorType: "dxTextBox",
+  
+            });
+            form.option("items", formItems);
+        }
 }
 
   render() {

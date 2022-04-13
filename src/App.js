@@ -5,6 +5,7 @@ import Todo from './Components/Todo';
 import LinkAccount from './Components/LinkAccount';
 import FindClass from './Components/FindClass';
 import Notifications from './Components/Notifications';
+import Login from './Components/Login';
 
 import {
   BrowserRouter,
@@ -31,6 +32,7 @@ function App() {
               <Route path={'/linkAccount'} element={<LinkAccount/>}></Route>
               <Route path={'/findClass'} element={<FindClass/>}></Route>
               <Route path={'/notifications'} element={<Notifications/>}></Route>
+              <Route path={'/signin-login'} element={<Login/>}></Route>
             </Routes>
           </div>
         </BrowserRouter>
