@@ -6,7 +6,7 @@ import timeManagementTwo
 
 tasks_dates = ['2022-04-11', '2022-04-09', '2022-04-03', '2022-04-17', '2022-04-18']
 
-start_time_tasks = ['8:00 AM', '10:00 AM', '11:00 AM', '4:00 PM', '5:00 PM']
+start_time_tasks = ['08:00 AM', '10:00 AM', '11:00 AM', '04:00 PM', '05:00 PM']
 
 task_duration = [2, 1, 3, 1, 2]
 
