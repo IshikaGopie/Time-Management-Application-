@@ -9,16 +9,19 @@ from datetime import datetime
 
 @app.route('/signup', methods=['POST'])
 def signup():
-  userdata = request.get_json()
-  newuser = User( username=userdata['username'], email=userdata['email'] )
-  newuser.set_password( userdata['password'] )
-  try:
-    db.session.add( newuser )
-    db.session.commit()
-  except IntegrityError:
-    db.session.rollback()
-    return 'username or email already exists'
-  return 'user created'
+    userdata = request.get_json()
+    newuser = User(
+      username=userdata['username'],
+      email=userdata['email']
+    )
+    newuser.set_password( userdata['password'] )
+    try:
+        db.session.add( newuser )
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()
+        return 'username or email already exists'
+    return 'user created'
 
 
 
@@ -41,7 +44,8 @@ def get_events():
     list = []
     for e in ce:
         list.append(format_event(e))
-        return {'events': list}
+        
+    return {'events': list}
 
 
 
@@ -58,14 +62,17 @@ def get_event(id):
 @app.route("/events/<id>", methods = ['DELETE'])
 def delete_event(id):
     ce = CalendarEvent.query.filter_by( id_calendar = id ).one()
+    e = Event.query.filter_by( id_event = ce.id_event ).one()
 
     if(ce.tag != "assignment"):
-        e = Event.query.filter_by( id_event = ce.id_event ).one()
         db.session.delete(e)
-    #else:
-    #    "IN PROGRESS!"
+    else:
+        if(CalendarEvent.query.filter_by( id_event = ce.id_event ).count() == 1):
+            db.session.delete(e)
+
 
     db.session.delete(ce)
+
     db.session.commit()
 
     return f'Event (id: {id}) deleted!'
@@ -83,6 +90,7 @@ def update_event(id):
         location = None
     else:
         location = data['location']
+        
     if ( data['description'] == "" or None ):
         description = None
     else:
@@ -92,8 +100,14 @@ def update_event(id):
         title = data['title'],
         tag = data['tag'],
         priority = data['priority'],
-        startDate = datetime.strptime(data['startDate'], '%Y-%m-%dT%H:%M'),
-        endDate = datetime.strptime(data['endDate'], '%Y-%m-%dT%H:%M'),
+        startDate = datetime.strptime(
+            data['startDate'],
+            '%Y-%m-%dT%H:%M'
+        ),
+        endDate = datetime.strptime(
+            data['endDate'],
+            '%Y-%m-%dT%H:%M'
+        ),
         location = location,
         description = description
     ))
@@ -117,9 +131,15 @@ def create( data ):
     else:
         description = data['description']
 
-    start = datetime.strptime(data['startDate'], '%Y-%m-%dT%H:%M')
-    
-    end = datetime.strptime(data['endDate'], '%Y-%m-%dT%H:%M')
+    start = datetime.strptime(
+        data['startDate'],
+        '%Y-%m-%dT%H:%M'
+    )
+
+    end = datetime.strptime(
+        data['endDate'],
+        '%Y-%m-%dT%H:%M'
+    )
 
     if ( data['tag'] == 'assignment' ):
         e = Event(
@@ -129,20 +149,36 @@ def create( data ):
     else:
         e = Event(
             id_user = data['user'],
-            duration = get_duration(start, end)
+            duration = get_duration(
+                start, 
+                end
+            )
         )
     db.session.add(e)
 
     db.session.flush()
 
     if ( data['tag'] == 'assignment' ):
-        assignment = [None, data['title'], data['avgHrs'], data['priority'], start, end]
+        assignment = [
+            None,
+            data['title'],
+            data['avgHrs'],
+            data['priority'],
+            start,
+            end
+        ]
         sprints = events(assignment)
 
         for sprint in sprints:
-            startDate = datetime.strptime(sprint['date'] + sprint['start_time'], '%Y-%m-%d%I:%M %p')
+            startDate = datetime.strptime(
+                sprint['date'] + sprint['start_time'],
+                '%Y-%m-%d%I:%M %p'
+            )
 
-            endDate = datetime.strptime(sprint['date'] + sprint['end_time'], '%Y-%m-%d%I:%M %p')
+            endDate = datetime.strptime(
+                sprint['date'] + sprint['end_time'],
+                '%Y-%m-%d%I:%M %p'
+            )
 
             ce = CalendarEvent(
                 id_event = e.id_event,
@@ -179,7 +215,7 @@ def create( data ):
         db.session.flush()
 
     db.session.commit()
-    
+
     if ( data['tag'] == 'assignment' ):
         return {'events': list}
     else:
@@ -187,7 +223,7 @@ def create( data ):
 
 
 
-        
+
 def events(assignment):
     ce = CalendarEvent.query.filter(
             CalendarEvent.id_user == 1,
@@ -200,7 +236,9 @@ def events(assignment):
     e_duration = []
 
     for e in ce:
-        if ((e.id_event not in e_id) and (assignment[4] <= e.endDate) and (assignment[5] >= e.endDate)):
+        if ((e.id_event not in e_id)
+        and (assignment[4] <= e.endDate)
+        and (assignment[5] >= e.endDate)):
             e_id.append(e.id_event)
             e_startDate.append(date_toString(e.startDate))
             e_startTime.append(time_toString(e.startDate))
@@ -235,18 +273,22 @@ def events(assignment):
     endDate.append(date_toString(assignment[5]))
 
     for e in ce:
-        if ((e.id_event not in id) and (assignment[4] <= e.endDate) and (assignment[5] >= e.endDate)):
+        if ((e.id_event not in id)
+        and (assignment[4] <= e.endDate)
+        and (assignment[5] >= e.endDate)):
             id.append(e.id_event)
             title.append(e.title)
 
     for i in id:
-        start = None 
+        start = None
         end = None
         for e in ce:
             if(e.id_event == i):
-                if((e.startDate < start) or (start == None)):
+                if((e.startDate < start)
+                or (start == None)):
                     start = e.startDate
-                if((e.endDate > end) or (end == None)):
+                if((e.endDate > end)
+                or (end == None)):
                     end = e.endDate
             if(start and end != None):
                 startDate.append(date_toString(start))
@@ -263,14 +305,29 @@ def events(assignment):
                 duration.append(j.duration)
 
     timeline = []
-    timeline = timeManagementTwo.get_timeline(startDate, endDate, timeline)
+    timeline = timeManagementTwo.get_timeline(
+        startDate, 
+        endDate, 
+        timeline
+    )
 
-    scheduled_tasks = timeManagementTwo.init_schedule(e_startTime, e_startDate, e_duration, timeline)
-    
-    scheduled_assignments = timeManagementTwo.get_scheduled_assignments(scheduled_tasks, id, title,
-                                                                        duration, priority,
-                                                                        startDate, endDate,
-                                                                        timeline)
+    scheduled_tasks = timeManagementTwo.init_schedule(
+        e_startTime, 
+        e_startDate, 
+        e_duration, 
+        timeline
+    )
+
+    scheduled_assignments = timeManagementTwo.get_scheduled_assignments(
+        scheduled_tasks, 
+        id, 
+        title, 
+        duration, 
+        priority, 
+        startDate, 
+        endDate, 
+        timeline
+    )
 
     """
     print(timeline)
@@ -283,7 +340,7 @@ def events(assignment):
 
     for i in scheduled_assignments:
         print(i)
-    
+
     """
 
     return scheduled_assignments
