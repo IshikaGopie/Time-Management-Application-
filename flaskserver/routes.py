@@ -200,7 +200,7 @@ def create( data ):
                 db.session.flush()
 
             elif sprint['id'] in idList:
-                ce = CalendarEvent.query.filter_by( id_calendar = sprint['calendarID'] ) #change
+                ce = CalendarEvent.query.filter_by( id_calendar = sprint['calendarID'] )
 
                 ce.update(dict(
                     startDate = startDate,
@@ -242,7 +242,7 @@ def create( data ):
 
         continue
 
-    #db.session.commit()
+    db.session.commit()
 
     if ( data['tag'] == 'assignment' ):
         return {'events': list}
