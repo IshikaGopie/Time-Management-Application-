@@ -1,14 +1,14 @@
 from datetime import datetime, timedelta
 from minizinc import Instance, Model, Solver
 
-schedule = Model("./flaskserver/Schedule 7.0.mzn")
+schedule = Model("./flaskserver/timeManagement.mzn")
 
 chuffed = Solver.lookup("chuffed")
 
 instance = Instance(chuffed, schedule)
 
 time_slots = ['08:00 AM', '09:00 AM', '10:00 AM', '11:00 AM', '12:00 AM', '01:00 PM', '02:00 PM',
-              '03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM', '07:00 PM', '09:00 PM,', '10:00 PM', '11:00 PM']
+              '03:00 PM', '04:00 PM', '05:00 PM', '06:00 PM', '07:00 PM', '08:00 PM', '09:00 PM', '10:00 PM', '11:00 PM']
 
 
 def get_timeline(assignment_start_dates, assignments_end_dates, timeline):
@@ -44,21 +44,12 @@ def set_data(assignment_durations, priority, assignment_start_dates, assignment_
     start_indexes, end_indexes = get_date_numbers(assignment_start_dates, assignment_end_dates, timeline, start_indexes,
                                                   end_indexes)
     num_days = len(timeline)
-    num_slots = 15
+    num_slots = len(time_slots) - 1
     return assignment_durations, priority, start_indexes, end_indexes, num_days, num_tasks, num_slots
 
 
-def get_remainder_slots(num_days, num_slots, assignment_durations, num_tasks):
-    total_time = sum(assignment_durations)
-    available_slots = num_slots * num_days
-    remainder_slots = available_slots - total_time
-    if total_time < available_slots:
-        assignment_durations[num_tasks] = remainder_slots
-    return assignment_durations
-
-
 def init_schedule(start_time_tasks, tasks_dates, tasks_durations, timeline):
-    scheduled_tasks = [[0 for i in range(len(timeline))] for j in range(len(time_slots))]
+    scheduled_tasks = [[0 for i in range(len(timeline))] for j in range(len(time_slots)-1)]
     for i in range(0, len(start_time_tasks)):
         row = time_slots.index(start_time_tasks[i])
         col = timeline.index(tasks_dates[i])
@@ -75,7 +66,6 @@ def assignment_handler(scheduled_tasks, assignment_durations, priorities, assign
                        timeline):
     assignment_durations, priorities, start_indexes, end_indexes, num_days, num_tasks, num_slots = set_data(
         assignment_durations, priorities, assignment_start_dates, assignment_end_dates, timeline)
-    assignment_durations = get_remainder_slots(num_days, num_slots, assignment_durations, num_tasks)
     instance["num_tasks"] = num_tasks
     instance["num_slots"] = num_slots
     instance["num_days"] = num_days
@@ -89,18 +79,21 @@ def assignment_handler(scheduled_tasks, assignment_durations, priorities, assign
     return result, num_tasks
 
 
-def get_scheduled_assignments(scheduled_tasks, assignment_id, assignment_title, assignment_durations, priorities,
+def get_scheduled_assignments(calendar_id, scheduled_tasks, assignment_id, assignment_title, assignment_durations, priorities,
                               assignment_start_dates, assignment_end_dates, timeline):
     scheduled_assignments = []
     results, num_tasks = assignment_handler(scheduled_tasks, assignment_durations, priorities,
                                             assignment_start_dates, assignment_end_dates, timeline)
+
+  
     for x in range(0, num_tasks):
         for i, j in enumerate(results):
             for k, l in enumerate(j):
-                if l == x+1:
-                    scheduled_assignments.append({'id': assignment_id[x],
+                if l == x + 1:
+                    scheduled_assignments.append({'calendarID': calendar_id,
+                                                  'id': assignment_id[x],
                                                   'title': assignment_title[x],
                                                   'start_time': time_slots[i],
-                                                  'end_time': time_slots[i + 1],
+                                                  'end_time': time_slots[i+1],
                                                   'date': timeline[k]})
-    return scheduled_assignments
+    return scheduled_assignments, results
