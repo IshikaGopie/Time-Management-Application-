@@ -203,15 +203,8 @@ def create( data ):
                 ce = CalendarEvent.query.filter_by( id_calendar = sprint['calendarID'] ) #change
 
                 ce.update(dict(
-                    id_event = sprint['id'],
-                    id_user = data['user'],
-                    title = data['title'],
-                    tag = data['tag'],
-                    priority = data['priority'],
-                    startDate = start,
-                    endDate = end,
-                    location = location,
-                    description = description
+                    startDate = startDate,
+                    endDate = endDate,
                 ))
 
                 ce = CalendarEvent.query.filter_by( id_calendar = sprint['calendarID'] ).one()
@@ -302,7 +295,6 @@ def events(assignment):
     endDate = []
 
     for x in range(int(assignment[1])):
-        print(x)
         id_calendar.append(None)
     id_event.append(None)
     title.append(assignment[0])
@@ -317,6 +309,7 @@ def events(assignment):
         elif ((e.id_event not in id_event)
         and (assignment[3] <= e.endDate)
         and (assignment[4] >= e.endDate)):
+            id_calendar.append(e.id_calendar)
             id_event.append(e.id_event)
             title.append(e.title)
             priority.append(e.priority)
@@ -337,8 +330,8 @@ def events(assignment):
             endDate.append(date_toString(end))
             duration.append(int(timelineDuration))
 
-    print(id_calendar)
-    print(id_event)
+    #print(id_calendar)
+    #print(id_event)
     #print(title)
     #print(duration)
     #print(priority)
@@ -391,8 +384,8 @@ def events(assignment):
 
     #print("\n")
 
-    for i in scheduled_assignments:
-        print(i)
+    #for i in scheduled_assignments:
+    #    print(i)
 
     
 

@@ -85,15 +85,16 @@ def get_scheduled_assignments(calendar_id, scheduled_tasks, assignment_id, assig
     results, num_tasks = assignment_handler(scheduled_tasks, assignment_durations, priorities,
                                             assignment_start_dates, assignment_end_dates, timeline)
 
-  
+    count = 0
     for x in range(0, num_tasks):
         for i, j in enumerate(results):
             for k, l in enumerate(j):
                 if l == x + 1:
-                    scheduled_assignments.append({'calendarID': calendar_id,
+                    scheduled_assignments.append({'calendarID': calendar_id[count],
                                                   'id': assignment_id[x],
                                                   'title': assignment_title[x],
                                                   'start_time': time_slots[i],
                                                   'end_time': time_slots[i+1],
                                                   'date': timeline[k]})
+                    count+=1
     return scheduled_assignments, results
