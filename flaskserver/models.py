@@ -31,7 +31,7 @@ class CalendarEvent(db.Model):
     location = db.Column(db.String(10))
     description = db.Column(db.String(1000))
     startDate = db.Column(db.DateTime, default = datetime.utcnow)
-    endDate = db.Column(db.DateTime)
+    endDate = db.Column(db.DateTime, default=datetime.utcnow)
         
     def __repr__(self):
         return f"Event('{self.title}', '{self.tag}', '{self.priority}', '{self.location}', '{self.description}', '{self.startDate}', '{self.endDate}')"

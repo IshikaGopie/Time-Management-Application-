@@ -18,14 +18,11 @@ const currentDate = new Date(2022, 3, 4);
 
 const url = 'http://localhost:5000';
 const dataSource = AspNetData.createStore({
-  key: 'EventID',
+  key: 'id',
   loadUrl: `${url}/events`,
   insertUrl: `${url}/events`,
   updateUrl: `${url}/events`,
-  deleteUrl: `${url}/DeleteEvent`,
-  onBeforeSend: (_, ajaxOptions) => {
-    ajaxOptions.xhrFields = { withCredentials: false };
-  },
+  deleteUrl: `${url}/events`,
 });
 
 /*
@@ -148,12 +145,12 @@ class App extends React.Component {
 
     const form = e.form
     let formItems = form.option("items"); 
-        if (!formItems.find(function(i) { return i.dataField === "location" })) {
+        if (!formItems.find(function(i) { return i.dataField === "avgHrs" })) {
             formItems.push({
                 colSpan: 2,
                 label: { text: "Average Time:" },
                 editorType: "dxTextBox",
-  
+                dataField : "avgHrs",
             });
             form.option("items", formItems);
         }
@@ -164,7 +161,7 @@ class App extends React.Component {
 
       <React.Fragment>
         <Scheduler
-          timeZone="America/Caracas"
+          timeZone="Etc/UTC"
           dataSource={dataSource}
           views={views}
           defaultCurrentView="month"
@@ -173,15 +170,16 @@ class App extends React.Component {
           endDayHour={24}
           height={600}
           editing={this.state}
+          dateSerializationFormat="yyyy-MM-ddTHH:mm:ssZ"
           onAppointmentFormOpening={this.onAppointmentFormOpening}
           onAppointmentAdded={this.showAddedToast}
           onAppointmentUpdated={this.showUpdatedToast}
           onAppointmentDeleted={this.showDeletedToast}
-         >
-           <Resource
+          >
+          <Resource
             dataSource={categories}
             fieldExpr="tag"
-            label="Categories"
+            label="Tag"
             validationRules={this.validationRules.position}
           />
           <Resource
@@ -189,8 +187,7 @@ class App extends React.Component {
             fieldExpr="priority"
             label="Priority"
           />
-
-          </Scheduler>
+        </Scheduler>
         <div className="options">
           <div className="caption">Options</div>
           <div className="options-container">

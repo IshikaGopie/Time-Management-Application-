@@ -70,7 +70,7 @@ export const data = [
 
 export const priorities = [
     {
-        text: '1',
+        text: '1: Highest',
         id: 1,
     }, 
     {
@@ -86,7 +86,7 @@ export const priorities = [
         id: 4, 
     },
     {
-        text: '5',
+        text: '5: Lowest',
         id: 5, 
     },
   ];

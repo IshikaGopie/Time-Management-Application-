@@ -7,6 +7,8 @@ from flaskserver.models import User, CalendarEvent, Event
 
 from datetime import datetime
 
+import json
+
 @app.route('/signup', methods=['POST'])
 def signup():
     userdata = request.get_json()
@@ -28,11 +30,11 @@ def signup():
 
 @app.route("/events", methods = ['POST'])
 def create_event():
-    data = request.get_json()
+    data = json.loads(request.form.get("values"))
 
     events = create (data)
 
-    return events
+    return events, 201
 
 
 
@@ -50,18 +52,9 @@ def get_events():
 
 
 
-@app.route("/events/<id>", methods = ['GET'])
-def get_event(id):
-    ce = CalendarEvent.query.filter_by( id_calendar = id ).one()
-
-    return {'event': format_event(ce)}
-
-
-
-
-@app.route("/events/<id>", methods = ['DELETE'])
-def delete_event(id):
-    ce = CalendarEvent.query.filter_by( id_calendar = id ).one()
+@app.route("/events", methods = ['DELETE'])
+def delete_event():
+    ce = CalendarEvent.query.filter_by( id_calendar = request.form.get("key") ).one()
     e = Event.query.filter_by( id_event = ce.id_event ).one()
 
     if(ce.tag != "assignment"):
@@ -80,40 +73,43 @@ def delete_event(id):
 
 
 
-@app.route("/events/<id>", methods = ['PUT'])
-def update_event(id):
-    ce = CalendarEvent.query.filter_by( id_calendar = id )
+@app.route("/events", methods = ['PUT'])
+def update_event():
+    ce = CalendarEvent.query.filter_by( id_calendar = request.form.get("key") )
+    data = json.loads(request.form.get("values"))
 
-    data = request.get_json()
-
-    if ( data['location'] == "" or None ):
+    if 'location' not in data:
+        location = None
+    elif ( data['location'] == "" or None ):
         location = None
     else:
         location = data['location']
-        
-    if ( data['description'] == "" or None ):
+
+    if 'description' not in data:
+        description = None
+    elif ( data['description'] == "" or None ):
         description = None
     else:
         description = data['description']
 
     ce.update(dict(
-        title = data['title'],
+        title = data['text'],
         tag = data['tag'],
         priority = data['priority'],
         startDate = datetime.strptime(
             data['startDate'],
-            '%Y-%m-%dT%H:%M'
+            '%Y-%m-%dT%H:%M:%SZ'
         ),
         endDate = datetime.strptime(
             data['endDate'],
-            '%Y-%m-%dT%H:%M'
+            '%Y-%m-%dT%H:%M:%SZ'
         ),
         location = location,
         description = description
     ))
 
     db.session.commit()
-    return {'event': format_event(ce.one())}
+    return ""
 
 
 
@@ -122,34 +118,38 @@ def create( data ):
     list = []
     missing = []
 
-    if ( data['location'] == "" or None ):
+    if 'location' not in data:
+        location = None
+    elif ( data['location'] == "" or None ):
         location = None
     else:
         location = data['location']
 
-    if ( data['description'] == "" or None ):
+    if 'description' not in data:
+        description = None
+    elif ( data['description'] == "" or None ):
         description = None
     else:
         description = data['description']
 
     start = datetime.strptime(
         data['startDate'],
-        '%Y-%m-%dT%H:%M'
+        '%Y-%m-%dT%H:%M:%SZ'
     )
 
     end = datetime.strptime(
         data['endDate'],
-        '%Y-%m-%dT%H:%M'
+        '%Y-%m-%dT%H:%M:%SZ'
     )
 
     if ( data['tag'] == 'assignment' ):
         e = Event(
-            id_user = data['user'],
+            id_user = 1,
             duration = data['avgHrs']
         )
     else:
         e = Event(
-            id_user = data['user'],
+            id_user = 1,
             duration = get_duration(
                 start, 
                 end
@@ -161,7 +161,7 @@ def create( data ):
 
     if ( data['tag'] == 'assignment' ):
         assignment = [
-            data['title'],
+            data['text'],
             data['avgHrs'],
             data['priority'],
             start,
@@ -185,8 +185,8 @@ def create( data ):
             if sprint['id'] == None:
                 ce = CalendarEvent(
                     id_event = e.id_event,
-                    id_user = data['user'],
-                    title = data['title'],
+                    id_user = 1,
+                    title = data['text'],
                     tag = data['tag'],
                     priority = data['priority'],
                     startDate = startDate,
@@ -221,8 +221,8 @@ def create( data ):
     else:
         ce = CalendarEvent(
             id_event = e.id_event,
-            id_user = data['user'],
-            title = data['title'],
+            id_user = 1,
+            title = data['text'],
             tag = data['tag'],
             priority = data['priority'],
             startDate = start,
@@ -298,7 +298,7 @@ def events(assignment):
         id_calendar.append(None)
     id_event.append(None)
     title.append(assignment[0])
-    duration.append(assignment[1])
+    duration.append(int(assignment[1]))
     priority.append(assignment[2])
     startDate.append(date_toString(assignment[3]))
     endDate.append(date_toString(assignment[4]))
