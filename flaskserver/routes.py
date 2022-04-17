@@ -45,7 +45,7 @@ def get_events():
     for e in ce:
         list.append(format_event(e))
         
-    return {'events': list}
+    return {'data': list}
 
 
 
@@ -397,7 +397,7 @@ def events(assignment):
 def format_event(calendar):
     return{
         "id": calendar.id_calendar,
-        "title": calendar.title,
+        "text": calendar.title,
         "tag": calendar.tag,
         "priority": calendar.priority,
         "startDate": calendar.startDate,

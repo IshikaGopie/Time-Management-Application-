@@ -16,15 +16,15 @@ import * as AspNetData from 'devextreme-aspnet-data-nojquery';
 const views = ["month","day", "week", "agenda"];
 const currentDate = new Date(2022, 3, 4);
 
-const url = 'http://localhost:5000/';
+const url = 'http://localhost:5000';
 const dataSource = AspNetData.createStore({
   key: 'EventID',
-  loadUrl: `${url}/GetEvents`,
-  insertUrl: `${url}/PostEvents`,
+  loadUrl: `${url}/events`,
+  insertUrl: `${url}/events`,
   updateUrl: `${url}/events`,
   deleteUrl: `${url}/DeleteEvent`,
   onBeforeSend: (_, ajaxOptions) => {
-    ajaxOptions.xhrFields = { withCredentials: true };
+    ajaxOptions.xhrFields = { withCredentials: false };
   },
 });
 
@@ -164,13 +164,13 @@ class App extends React.Component {
 
       <React.Fragment>
         <Scheduler
-          timeZone="America/Atlantic"
-          dataSource={data}
+          timeZone="America/Caracas"
+          dataSource={dataSource}
           views={views}
           defaultCurrentView="month"
           defaultCurrentDate={currentDate}
-          startDayHour={9}
-          endDayHour={19}
+          startDayHour={0}
+          endDayHour={24}
           height={600}
           editing={this.state}
           onAppointmentFormOpening={this.onAppointmentFormOpening}
@@ -180,13 +180,13 @@ class App extends React.Component {
          >
            <Resource
             dataSource={categories}
-            fieldExpr="catId"
+            fieldExpr="tag"
             label="Categories"
             validationRules={this.validationRules.position}
           />
           <Resource
             dataSource={priorities}
-            fieldExpr="priorityId"
+            fieldExpr="priority"
             label="Priority"
           />
 
@@ -214,20 +214,6 @@ class App extends React.Component {
                 text="Allow updating"
                 onValueChanged={this.onAllowUpdatingChanged}
               />
-/*
-        <div className="App">
-            <h1>Schedule</h1>
-            <h2>Add New Event</h2>
-            <div>
-                <form onSubmit={(e) => submit(e)}>
-                    <input type="text" onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })} placeholder="add_title" style={{ width: "20%", marginRight: "10px" }} value={newEvent.title} />
-                    <DateTimePicker onChange={(start) => setNewEvent({ ...newEvent, start })} value={newEvent.start} />
-                    <DateTimePicker onChange={(end) => setNewEvent({ ...newEvent, end })} value={newEvent.end}/>
-                    <button style={{ marginTop: "10px" }} onClick={handleAddEvent}>
-                        Add Event
-                    </button>
-                </form>
-*/
             </div>
             <div className="option">
               <CheckBox

@@ -70,55 +70,49 @@ export const data = [
 
 export const priorities = [
     {
-      text: '1',
-      id: 1,
-
+        text: '1',
+        id: 1,
     }, 
     {
-      text: '2',
-      id: 2,
-
+        text: '2',
+        id: 2,
     },
     {
         text: '3',
         id: 3,
-       
     },
     {
         text: '4',
-        id: 4,
-      
+        id: 4, 
     },
     {
         text: '5',
-        id: 5,
-      
+        id: 5, 
     },
   ];
 
   
 export const categories = [
     {
-     id: 1,
+     id: 'assignment',
      text: 'Assignment',
      color: '#727bd2',
     }, 
     {
-      id: 2,
-      text: 'Exams',
+      id: 'exam',
+      text: 'Exam',
       color: '#7b49d3',
 
     },
     {
-       id: 3,
-       text: 'Study',
+       id: 'leisure',
+       text: 'Leisure',
        color: '#32c9ed',
        
     },
     {
-        id: 4,
+        id: 'class',
         text: 'Class',
-
     },
   ];
 
