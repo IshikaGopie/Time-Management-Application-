@@ -8,6 +8,7 @@ from flaskserver.models import User, CalendarEvent, Event
 from datetime import datetime
 
 import json
+import math
 
 @app.route('/signup', methods=['POST'])
 def signup():
@@ -298,7 +299,7 @@ def events(assignment):
         id_calendar.append(None)
     id_event.append(None)
     title.append(assignment[0])
-    duration.append(int(assignment[1]))
+    duration.append(int(math.ceil(float(assignment[1]))))
     priority.append(assignment[2])
     startDate.append(date_toString(assignment[3]))
     endDate.append(date_toString(assignment[4]))
