@@ -188,48 +188,6 @@ class App extends React.Component {
             label="Priority"
           />
         </Scheduler>
-        <div className="options">
-          <div className="caption">Options</div>
-          <div className="options-container">
-            <div className="option">
-              <CheckBox 
-                defaultValue={this.state.allowAdding}
-                text="Allow adding" 
-                onValueChanged={this.onAllowAddingChanged}
-              /> 
-            </div>
-            <div className="option">
-              <CheckBox
-                defaultValue={this.state.allowDeleting}
-                text="Allow deleting"
-                onValueChanged={this.onAllowDeletingChanged}
-              />
-            </div>
-            <div className="option">
-              <CheckBox
-                defaultValue={this.state.allowUpdating}
-                text="Allow updating"
-                onValueChanged={this.onAllowUpdatingChanged}
-              />
-            </div>
-            <div className="option">
-              <CheckBox
-                defaultValue={this.state.allowResizing}
-                text="Allow resizing"
-                onValueChanged={this.onAllowResizingChanged}
-                disabled={!this.state.allowUpdating}
-              />
-            </div>
-            <div className="option">
-              <CheckBox
-                defaultValue={this.state.allowDragging}
-                text="Allow dragging"
-                onValueChanged={this.onAllowDraggingChanged}
-                disabled={!this.state.allowUpdating}
-              />
-            </div>
-          </div>
-        </div>
       </React.Fragment>
     );
   }

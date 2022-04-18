@@ -284,7 +284,9 @@ def events(assignment):
 
     ce = CalendarEvent.query.filter(
             CalendarEvent.id_user == 1,
-            CalendarEvent.tag == "assignment"
+            CalendarEvent.tag == "assignment",
+            CalendarEvent.startDate >= assignment[3], 
+            CalendarEvent.endDate <= assignment[4],
         )
 
     id_calendar = []
@@ -321,6 +323,7 @@ def events(assignment):
         timelineDuration = 0
         for e in ce:
             if(e.id_event == i):
+                print(e)
                 timelineDuration += get_duration(e.startDate, e.endDate)
                 if((start == None) or (e.startDate < start)):
                     start = e.startDate
@@ -329,15 +332,15 @@ def events(assignment):
         if(start and end != None):
             startDate.append(date_toString(start))
             endDate.append(date_toString(end))
-            duration.append(int(timelineDuration))
+            duration.append(int(math.ceil(timelineDuration)))
 
-    #print(id_calendar)
-    #print(id_event)
-    #print(title)
-    #print(duration)
-    #print(priority)
-    #print(startDate)
-    #print(endDate)
+    print(id_calendar)
+    print(id_event)
+    print(title)
+    print(duration)
+    print(priority)
+    print(startDate)
+    print(endDate)
 
     """
     e = Event.query.filter(
