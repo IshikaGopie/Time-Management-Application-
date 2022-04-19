@@ -1,3 +1,4 @@
+from importlib import reload
 from flaskserver import timeManagement
 
 from sqlite3 import IntegrityError
@@ -151,9 +152,11 @@ def create( data ):
     else:
         e = Event(
             id_user = 1,
-            duration = get_duration(
+            duration = int(
+                get_duration(
                 start, 
                 end
+                )
             )
         )
     db.session.add(e)
@@ -246,9 +249,9 @@ def create( data ):
     db.session.commit()
 
     if ( data['tag'] == 'assignment' ):
-        return {'events': list}
+        return {'data': list}
     else:
-        return {'event': format_event(ce)}
+        return {'data': format_event(ce)}
 
 
 
@@ -256,7 +259,9 @@ def create( data ):
 def events(assignment):
     ce = CalendarEvent.query.filter(
             CalendarEvent.id_user == 1,
-            CalendarEvent.tag != "assignment"
+            CalendarEvent.tag != "assignment",
+            CalendarEvent.startDate >= assignment[3], 
+            CalendarEvent.endDate <= assignment[4]
         )
 
     e_id = []
@@ -265,9 +270,7 @@ def events(assignment):
     e_duration = []
 
     for e in ce:
-        if ((e.id_event not in e_id)
-        and (assignment[3] <= e.endDate)
-        and (assignment[4] >= e.endDate)):
+        if (e.id_event not in e_id):
             e_id.append(e.id_event)
             e_startDate.append(date_toString(e.startDate))
             e_startTime.append(time_toString(e.startDate))
@@ -286,7 +289,7 @@ def events(assignment):
             CalendarEvent.id_user == 1,
             CalendarEvent.tag == "assignment",
             CalendarEvent.startDate >= assignment[3], 
-            CalendarEvent.endDate <= assignment[4],
+            CalendarEvent.endDate <= assignment[4]
         )
 
     id_calendar = []
@@ -307,23 +310,22 @@ def events(assignment):
     endDate.append(date_toString(assignment[4]))
 
     for e in ce:
-        if e.id_event in id_event:
-            id_calendar.append(e.id_calendar)
-        elif ((e.id_event not in id_event)
-        and (assignment[3] <= e.endDate)
-        and (assignment[4] >= e.endDate)):
-            id_calendar.append(e.id_calendar)
+        id_calendar.append(e.id_calendar)
+        if e.id_event not in id_event:
+            #print(e)
             id_event.append(e.id_event)
             title.append(e.title)
             priority.append(e.priority)
 
-    for i in id_event:
+    #print("")
+
+    for i in id_event[1:]:
         start = None
         end = None
         timelineDuration = 0
         for e in ce:
             if(e.id_event == i):
-                print(e)
+                #print(e)
                 timelineDuration += get_duration(e.startDate, e.endDate)
                 if((start == None) or (e.startDate < start)):
                     start = e.startDate
@@ -333,7 +335,7 @@ def events(assignment):
             startDate.append(date_toString(start))
             endDate.append(date_toString(end))
             duration.append(int(math.ceil(timelineDuration)))
-
+    """
     print(id_calendar)
     print(id_event)
     print(title)
@@ -341,7 +343,7 @@ def events(assignment):
     print(priority)
     print(startDate)
     print(endDate)
-
+    """
     """
     e = Event.query.filter(
             Event.id_user == 1
@@ -360,12 +362,31 @@ def events(assignment):
         timeline
     )
 
+    
+    #print(e_startTime)
+    #print(e_startDate)
+    #print(e_duration)
+    #print(timeline)
+    
+
     scheduled_tasks = timeManagement.init_schedule(
         e_startTime, 
         e_startDate, 
         e_duration, 
         timeline
     )
+
+    #for i in scheduled_tasks:
+    #    print(i)
+
+    #print(id_calendar)
+    #print(id_event)
+    #print(title)
+    #print(duration)
+    #print(priority)
+    #print(startDate)
+    #print(endDate)
+    #print(timeline)
 
     scheduled_assignments, results = timeManagement.get_scheduled_assignments(
         id_calendar,
@@ -378,20 +399,8 @@ def events(assignment):
         endDate, 
         timeline
     )
-
     
-    #print(timeline)
-    #print("\n")
-
-    #for i in scheduled_tasks:
-    #    print(i)
-
-    #print("\n")
-
-    #for i in scheduled_assignments:
-    #    print(i)
-
-    
+    reload(timeManagement)
 
     return scheduled_assignments, id_event
 
