@@ -1,4 +1,6 @@
 from importlib import reload
+
+from sqlalchemy import false, true
 from flaskserver import timeManagement
 
 from sqlite3 import IntegrityError
@@ -118,7 +120,7 @@ def update_event():
 
 def create( data ):
     list = []
-    missing = []
+    mia = []
 
     if 'location' not in data:
         location = None
@@ -175,7 +177,15 @@ def create( data ):
         sprints, idList = events(assignment)
 
         for sprint in sprints:
-
+            print(sprint)
+        print(idList)
+        print("")
+        print("")
+        print("")
+        print("")
+        for sprint in sprints:
+            print(sprint)
+            print("")
             startDate = datetime.strptime(
                 sprint['date'] + sprint['start_time'],
                 '%Y-%m-%d%I:%M %p'
@@ -187,6 +197,7 @@ def create( data ):
             )
 
             if sprint['id'] == None:
+
                 ce = CalendarEvent(
                     id_event = e.id_event,
                     id_user = 1,
@@ -204,21 +215,12 @@ def create( data ):
                 db.session.flush()
 
             elif sprint['id'] in idList:
-                ce = CalendarEvent.query.filter_by( id_calendar = sprint['calendarID'] )
-
-                ce.update(dict(
-                    startDate = startDate,
-                    endDate = endDate,
-                ))
+                print(sprint)
+                ce = CalendarEvent.query.filter( CalendarEvent.id_calendar == sprint['calendarID'] ).update({"startDate":startDate,"endDate":endDate})
 
                 ce = CalendarEvent.query.filter_by( id_calendar = sprint['calendarID'] ).one()
 
                 db.session.flush()
-
-            else:
-                missing.append(sprint['id'])
-                
-                continue
 
 
             list.append(format_event(ce))
@@ -239,12 +241,23 @@ def create( data ):
 
         db.session.flush()
 
-    for id in missing:
-        e = Event.query.filter_by(id_event = id).one()
+    for id in idList:
+        missing = true
+        if(id == None):
+            continue
+        for sprint in sprints:
+            if((sprint['id'] == id)):
+                missing = false
+        if missing == true:
+            mia.append(id)
+
+    print(mia)
+
+    for id in mia:
+        print(id)
+        e = Event.query.filter_by(id_event = id).first()
 
         db.session.delete(e)
-
-        continue
 
     db.session.commit()
 
