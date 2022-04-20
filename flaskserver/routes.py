@@ -1,3 +1,4 @@
+from collections import defaultdict
 from importlib import reload
 
 from sqlalchemy import false, true
@@ -146,21 +147,7 @@ def create( data ):
         '%Y-%m-%dT%H:%M:%SZ'
     )
 
-    if ( data['tag'] == 'assignment' ):
-        e = Event(
-            id_user = 1,
-            duration = data['avgHrs']
-        )
-    else:
-        e = Event(
-            id_user = 1,
-            duration = int(
-                get_duration(
-                start, 
-                end
-                )
-            )
-        )
+    e = Event(id_user = 1)
     db.session.add(e)
 
     db.session.flush()
@@ -176,16 +163,10 @@ def create( data ):
 
         sprints, idList = events(assignment)
 
+
+
         for sprint in sprints:
             print(sprint)
-        print(idList)
-        print("")
-        print("")
-        print("")
-        print("")
-        for sprint in sprints:
-            print(sprint)
-            print("")
             startDate = datetime.strptime(
                 sprint['date'] + sprint['start_time'],
                 '%Y-%m-%d%I:%M %p'
@@ -215,10 +196,12 @@ def create( data ):
                 db.session.flush()
 
             elif sprint['id'] in idList:
-                print(sprint)
-                ce = CalendarEvent.query.filter( CalendarEvent.id_calendar == sprint['calendarID'] ).update({"startDate":startDate,"endDate":endDate})
-
-                ce = CalendarEvent.query.filter_by( id_calendar = sprint['calendarID'] ).one()
+                print("ID", sprint['id'])
+                print("calendarID", sprint['calendarID'])
+                ce = CalendarEvent.query.get( sprint['calendarID'] )
+                print(ce)
+                ce.startDate = startDate
+                ce.endDate = endDate
 
                 db.session.flush()
 
@@ -241,23 +224,23 @@ def create( data ):
 
         db.session.flush()
 
-    for id in idList:
-        missing = true
-        if(id == None):
-            continue
-        for sprint in sprints:
-            if((sprint['id'] == id)):
-                missing = false
-        if missing == true:
-            mia.append(id)
+    if ( data['tag'] == 'assignment' ):
+        for id in idList:
+            missing = true
+            if(id == None):
+                continue
+            for sprint in sprints:
+                if((sprint['id'] == id)):
+                    missing = false
+            if missing == true:
+                mia.append(id)
 
-    print(mia)
+        #print(mia)
 
-    for id in mia:
-        print(id)
-        e = Event.query.filter_by(id_event = id).first()
+        for id in mia:
+            e = Event.query.filter_by(id_event = id).first()
 
-        db.session.delete(e)
+            db.session.delete(e)
 
     db.session.commit()
 
@@ -287,16 +270,11 @@ def events(assignment):
             e_id.append(e.id_event)
             e_startDate.append(date_toString(e.startDate))
             e_startTime.append(time_toString(e.startDate))
+            e_duration.append(int(get_duration(e.startDate, e.endDate)))
 
     e = Event.query.filter(
         Event.id_user == 1
     )
-
-    for i in e_id:
-        for j in e:
-            if(i == j.id_event):
-                e_duration.append(j.duration)
-
 
     ce = CalendarEvent.query.filter(
             CalendarEvent.id_user == 1,
@@ -305,7 +283,7 @@ def events(assignment):
             CalendarEvent.endDate <= assignment[4]
         )
 
-    id_calendar = []
+    id_calendar = defaultdict(list)
     id_event = []
     title = []
     duration = []
@@ -313,8 +291,10 @@ def events(assignment):
     startDate = []
     endDate = []
 
+    key = 0
+
     for x in range(int(assignment[1])):
-        id_calendar.append(None)
+        id_calendar[key].append(None)
     id_event.append(None)
     title.append(assignment[0])
     duration.append(int(math.ceil(float(assignment[1]))))
@@ -323,13 +303,15 @@ def events(assignment):
     endDate.append(date_toString(assignment[4]))
 
     for e in ce:
-        id_calendar.append(e.id_calendar)
         if e.id_event not in id_event:
             #print(e)
+            key+=1
             id_event.append(e.id_event)
             title.append(e.title)
             priority.append(e.priority)
-
+        id_calendar[key].append(e.id_calendar)
+    
+    
     #print("")
 
     for i in id_event[1:]:
@@ -348,6 +330,7 @@ def events(assignment):
             startDate.append(date_toString(start))
             endDate.append(date_toString(end))
             duration.append(int(math.ceil(timelineDuration)))
+
     """
     print(id_calendar)
     print(id_event)
@@ -375,6 +358,7 @@ def events(assignment):
         timeline
     )
 
+    print("calendar", id_calendar[0])
     
     #print(e_startTime)
     #print(e_startDate)
@@ -391,15 +375,16 @@ def events(assignment):
 
     #for i in scheduled_tasks:
     #    print(i)
+    
+    print(id_calendar)
+    print(id_event)
+    print(title)
+    print(duration)
+    print(priority)
+    print(startDate)
+    print(endDate)
+    print(timeline)
 
-    #print(id_calendar)
-    #print(id_event)
-    #print(title)
-    #print(duration)
-    #print(priority)
-    #print(startDate)
-    #print(endDate)
-    #print(timeline)
 
     scheduled_assignments, results = timeManagement.get_scheduled_assignments(
         id_calendar,
@@ -414,6 +399,11 @@ def events(assignment):
     )
     
     reload(timeManagement)
+
+    for i in scheduled_assignments:
+        print(i)
+
+    #print(id_event)
 
     return scheduled_assignments, id_event
 

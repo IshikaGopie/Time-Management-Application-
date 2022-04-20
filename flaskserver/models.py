@@ -39,7 +39,6 @@ class CalendarEvent(db.Model):
 class Event(db.Model):
     id_event = db.Column(db.Integer, primary_key=True, autoincrement=True)
     id_user = db.Column(db.Integer, db.ForeignKey('user.id_user'), nullable=False)
-    duration = db.Column(db.Integer, nullable=False)
     calendarEvents = db.relationship('CalendarEvent', cascade="all, delete", backref='event', lazy=True)
 
 db.create_all()
