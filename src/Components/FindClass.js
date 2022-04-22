@@ -1,7 +1,59 @@
-import React from 'react'
+import React from 'react';
 
-function FindClass(){
-    return <h1>Find Class</h1>
+import Map from 'devextreme-react/map';
+import SelectBox from 'devextreme-react/select-box';
+
+import { mapTypes } from './data.js';
+
+class FindClass extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      mapTypeValue: mapTypes[0].key,
+    };
+    this.keys = {
+      // Specify your API keys for each map provider:
+      // bing: "YOUR_BING_MAPS_API_KEY",
+      // google: "YOUR_GOOGLE_MAPS_API_KEY",
+      // googleStatic: "YOUR_GOOGLE_STATIC_MAPS_API_KEY"
+    };
+    this.onMapTypeChanged = this.onMapTypeChanged.bind(this);
+  }
+
+  onMapTypeChanged(e) {
+    this.setState({
+      mapTypeValue: e.value,
+    });
+  }
+
+  render() {
+    return (
+      <div>
+        <Map
+          defaultCenter="University of West Indies,St. Augustine,Trinidad"
+          defaultZoom={17}
+          apiKey={this.keys}
+          height={400}
+          width="100%"
+          provider="bing"
+          type={this.state.mapTypeValue}>
+        </Map>
+        <div className="options">
+          <div className="caption">Options</div>
+          <div className="option">
+            <span>Map Type</span>
+            <SelectBox
+              value={this.state.mapTypeValue}
+              onValueChanged={this.onMapTypeChanged}
+              dataSource={mapTypes}
+              displayExpr="name"
+              valueExpr="key"
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
 }
 
 export default FindClass;
