@@ -34,7 +34,7 @@ class CalendarEvent(db.Model):
     endDate = db.Column(db.DateTime, default=datetime.utcnow)
         
     def __repr__(self):
-        return f"Event('{self.title}', '{self.tag}', '{self.priority}', '{self.location}', '{self.description}', '{self.startDate}', '{self.endDate}')"
+        return f"Event('{self.id_calendar}', '{self.id_event}', {self.title}', '{self.tag}', '{self.priority}', '{self.location}', '{self.description}', '{self.startDate}', '{self.endDate}')"
 
 class Event(db.Model):
     id_event = db.Column(db.Integer, primary_key=True, autoincrement=True)

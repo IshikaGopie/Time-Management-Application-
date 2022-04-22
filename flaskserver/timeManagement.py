@@ -90,8 +90,8 @@ def get_scheduled_assignments(calendar_id, scheduled_tasks, assignment_id, assig
         for i, j in enumerate(results):
             for k, l in enumerate(j):
                 if l == x + 1:
-                    print(x)
-                    print(count)
+                    #print(x)
+                    #print(count)
                     scheduled_assignments.append({'calendarID': calendar_id[x][count],
                                                   'id': assignment_id[x],
                                                   'title': assignment_title[x],

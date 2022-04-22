@@ -1,7 +1,6 @@
 from collections import defaultdict
 from importlib import reload
 
-from sqlalchemy import false, true
 from flaskserver import timeManagement
 
 from sqlite3 import IntegrityError
@@ -166,7 +165,7 @@ def create( data ):
 
 
         for sprint in sprints:
-            print(sprint)
+            #print(sprint)
             startDate = datetime.strptime(
                 sprint['date'] + sprint['start_time'],
                 '%Y-%m-%d%I:%M %p'
@@ -196,10 +195,10 @@ def create( data ):
                 db.session.flush()
 
             elif sprint['id'] in idList:
-                print("ID", sprint['id'])
-                print("calendarID", sprint['calendarID'])
+                #print("ID", sprint['id'])
+                #print("calendarID", sprint['calendarID'])
                 ce = CalendarEvent.query.get( sprint['calendarID'] )
-                print(ce)
+                #print(ce)
                 ce.startDate = startDate
                 ce.endDate = endDate
 
@@ -226,13 +225,13 @@ def create( data ):
 
     if ( data['tag'] == 'assignment' ):
         for id in idList:
-            missing = true
+            missing = True
             if(id == None):
                 continue
             for sprint in sprints:
                 if((sprint['id'] == id)):
-                    missing = false
-            if missing == true:
+                    missing = False
+            if missing == True:
                 mia.append(id)
 
         #print(mia)
@@ -276,12 +275,18 @@ def events(assignment):
         Event.id_user == 1
     )
 
+    print(assignment[3])
+    print(assignment[4])
+
     ce = CalendarEvent.query.filter(
             CalendarEvent.id_user == 1,
             CalendarEvent.tag == "assignment",
             CalendarEvent.startDate >= assignment[3], 
             CalendarEvent.endDate <= assignment[4]
         )
+
+    for i in ce:
+        print(i)
 
     id_calendar = defaultdict(list)
     id_event = []
@@ -322,6 +327,7 @@ def events(assignment):
             if(e.id_event == i):
                 #print(e)
                 timelineDuration += get_duration(e.startDate, e.endDate)
+                #print(timelineDuration)
                 if((start == None) or (e.startDate < start)):
                     start = e.startDate
                 if((end == None) or (e.endDate > end)):
@@ -358,7 +364,7 @@ def events(assignment):
         timeline
     )
 
-    print("calendar", id_calendar[0])
+    #print("calendar", id_calendar[0])
     
     #print(e_startTime)
     #print(e_startDate)

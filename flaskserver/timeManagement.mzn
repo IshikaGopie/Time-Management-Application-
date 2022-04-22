@@ -27,7 +27,7 @@ s = array2set(array1d(schedule));
 
 constraint forall(t in s)(if t <= num_tasks then count(schedule,t) = duration[t] endif);
 
-constraint forall(i in slots, j in days)(if Scheduled_tasks[i,j] = 0 /\ schedule[i,j] <= num_tasks then  j >= start_date[schedule[i,j] ] /\ j <= end_date[schedule[i,j] ] endif);
+constraint forall(i in slots, j in days)(if Scheduled_tasks[i,j] = 0 /\ schedule[i,j] <= num_tasks then  j >= start_date[schedule[i,j] ] /\ j < end_date[schedule[i,j] ] endif);
 
 var int: cost = sum([priority[i] | i in s]);
 
