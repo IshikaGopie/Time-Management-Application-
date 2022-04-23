@@ -7,3 +7,5 @@ Requirements:
 
 MiniZinc IDE installation (https://www.minizinc.org) as well as its python module (pip install minizinc).
  
+
+NOTE: Since the time managament application is in its prototype stage, there are certain limitations to the use of this application which are specified within the documentation.
